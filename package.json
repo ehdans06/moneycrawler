@@ -1,0 +1,16 @@
+{
+  "name": "moneycroller",
+  "version": "1.0.0",
+  "description": "cryptocurrency algorithmic trading program (using 'korbit' API)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dongmoon Min",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.6.0",
+    "express": "^4.16.2",
+    "request": "^2.83.0"
+  }
+}
