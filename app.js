@@ -1,15 +1,27 @@
 var express = require ('express');
 var request = require ('request');
-// var auth = require ('./modules/auth');
-// var ticker = require ('./modules/ticker');
-var algorithm = require ('./modules/algorithm');
-var app = express ();
+var auth = require ('./modules/auth');
+var simulation = require ('./modules/simulation');
+var trader = require ('./modules/trader');
 
 /***** login to KORBIT Server *****/
-// console.log ('login to korbit server...');
-// auth.login ();
+console.log ('login to korbit server...');
+auth.auth_init (function (err) {
+    if (err) {
+        console.log ("critical error: error while auth_init.");
+        process.exit (1);
+    }
+    else {
+        console.log ('auth complete.');
+    }
+});
 
-/***** access cost info *****/
+/*********** simulation ***********/
+// setInterval (function () {
+//     simulation.simulation ('xrp_krw');
+// }, 3000);
+
+/******** real transaction ********/
 setInterval (function () {
-    algorithm.simulation ('xrp_krw');
-}, 1500);
+    trader.auto_trader ('xrp_krw');
+}, 3000);
