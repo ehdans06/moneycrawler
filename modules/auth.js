@@ -111,9 +111,7 @@ var auth_init = function (cb) {
             login (callback);
         },
         function (callback) {
-            // if a system is in danger of expiring, refresh immediately
-            if (data.expires_in <= (REFRESH_RATE/1000))
-                refresh ();
+            refresh ();
             setInterval(refresh, REFRESH_RATE);
             console.log ('set refresh interval as %ds.', (REFRESH_RATE/1000));
             callback (null);

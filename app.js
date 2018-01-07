@@ -12,6 +12,16 @@ auth.auth_init (function (err) {
     }
     else {
         console.log ('auth complete.');
+        
+/*********** simulation ***********/
+        // setInterval (function () {
+        //     simulation.simulation ('xrp_krw');
+        // }, 1100);
+
+/******** real transaction ********/
+        setInterval (function () {
+            trader.auto_trader ('xrp_krw');
+        }, 3000);
     }
 });
 
@@ -21,6 +31,6 @@ auth.auth_init (function (err) {
 // }, 1100);
 
 /******** real transaction ********/
-setInterval (function () {
-    trader.auto_trader ('xrp_krw');
-}, 3000);
+// setInterval (function () {
+//     trader.auto_trader ('xrp_krw');
+// }, 3000);
