@@ -1,4 +1,3 @@
-var express = require ('express');
 var request = require ('request');
 var auth = require ('./modules/auth');
 var simulation = require ('./modules/simulation');
@@ -19,7 +18,7 @@ auth.auth_init (function (err) {
 /*********** simulation ***********/
 // setInterval (function () {
 //     simulation.simulation ('xrp_krw');
-// }, 3000);
+// }, 1100);
 
 /******** real transaction ********/
 setInterval (function () {

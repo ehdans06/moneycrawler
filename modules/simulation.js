@@ -14,9 +14,11 @@ var algorithm = function (data, cb) {
     var trade_opt = 0; // no trade
     if (Number(data.low) == Number(data.last) && !state) {
         trade_opt = 1; // bid (buy)
+        state = 1;
     }
-    if (Number(data.high) == Number(data.last) && state) {
+    else if (Number(data.high) == Number(data.last) && state) {
         trade_opt = 2; // ask (sell)
+        state = 0;
     }
     cb (null, trade_opt);
 }

@@ -30,7 +30,8 @@ var bid_request = {
         currency_pair: 'NULL',
         type: 'NULL',
         price: 'NULL',
-        coin_amount: 'NULL',
+        // coin_amount: 'NULL',
+        flat_amount: 'NULL',
         nonce: 'NULL'
     }
 };
@@ -55,23 +56,26 @@ var sell_request = {
 var calc_state = function (wallet_data, currency, cost_data, cb) {
     // set available coin & money (krw)
     // current_state.coin = wallet_data[currency].available;
-    current_state.coin = wallet_data.xrp.available;
-    current_state.money = wallet_data.krw.available;
+    current_state.coin = Number(wallet_data.xrp.available);
+    current_state.money = Number(wallet_data.krw.available);
     // set state; bid timing sicking mode / ask timing sicking mode
-    if (current_state.money > current_state.coin*cost_data.last) {
+    if (current_state.money > current_state.coin*Number(cost_data.last)) {
         current_state.state = 0;  // bid timing sicking mode
     }
     else {
         current_state.state = 1;  // ask timing sicking mode
     }
     // set current_asset
-    current_state.current_asset = wallet_data.total_volume;
+    current_state.current_asset = current_state.money + current_state.coin*Number(cost_data.last);
     // set first_asset
     if (current_state.first_asset == -1) {
-        current_state.first_asset = current_state.current_asset;
+        current_state.first_asset = Number(current_state.current_asset);
     }
     // set current profit
     current_state.profit = current_state.current_asset - current_state.first_asset;
+    // console.log (cost_data);
+    // console.log (wallet_data);
+    // console.log (current_state);
     cb (null, current_state);
 }
 
@@ -80,18 +84,25 @@ var algorithm = function (state, cost_data, cb) {
     var trade_opt = 0; // no trade
     if (Number(cost_data.low) == Number(cost_data.last) && !state) {
         trade_opt = 1; // bid (buy)
+        state = 1;
     }
-    if (Number(cost_data.high) == Number(cost_data.last) && state) {
+    else if (Number(cost_data.high) == Number(cost_data.last) && state) {
         trade_opt = 2; // ask (sell)
+        state = 0;
     }
     cb (null, trade_opt);
 }
 
 // send trade request to server (coping both bid and ask transaction)
-var send_trade_request_to_server = function (trade_opt, cb) {
+var send_trade_request_to_server = function (trade_opt, currency, cb) {
     if (trade_opt != 0) {
         if (trade_opt == 1) { // buy coins
-            
+            auth.get_access_token (function (access_token) {
+                bid_request.headers.Authorization = 'Bearer ' + String(access_token);
+                bid_request.form.currency_pair = currency;
+                bid_request.form.type = 'market';
+                bid_request.form.flat_amount = current_state.money;
+            });
         }
         else if (trade_opt == 2) { // sell coins
 
@@ -123,7 +134,7 @@ var auto_trader = function (currency) {
                 },
                 // 5. request bid/ask transaction 
                 function (trade_opt, callback) {
-                    send_trade_request_to_server (trade_opt, callback);
+                    send_trade_request_to_server (trade_opt, currency, callback);
                 }
             ], 
             // 6. log current state (asset, profit)
